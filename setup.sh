@@ -1,0 +1,1 @@
+pipenv run pyinstaller -y -F -w --hidden-import=PyQt5.QtPrintSupport -n client_vpn main.py && cp logo* dist/
