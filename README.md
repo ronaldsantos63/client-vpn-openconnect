@@ -17,3 +17,6 @@ This project aims to facilitate the use of the openconnect program to connect to
 1. Build executable
     > $ ./setup.sh
 1. Run client_vpn from dist folder
+
+# Screen
+![client_vpn](https://raw.githubusercontent.com/ronaldsantos63/client-vpn-openconnect/master/client_vpn.png)
