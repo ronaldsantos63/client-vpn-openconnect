@@ -40,6 +40,8 @@ jobs:
         pipenv run pytest --cov-config=.coveragerc --cov=.
     - name: Generate coverage
       uses: tj-actions/coverage-badge-py@v1.8
+    - name: Verify Changed files
+      uses: tj-actions/verify-changed-files@v9
       id: changed_files
       with:
         files: coverage.svg
