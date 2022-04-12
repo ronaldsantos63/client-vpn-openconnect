@@ -24,6 +24,8 @@ from PyQt5.QtCore import QByteArray
 from PyQt5.QtGui import QIcon
 from PyQt5.QtGui import QCloseEvent
 
+from crypto import Crypto
+
 
 def get_executable():
     if hasattr(sys, 'frozen') or hasattr(sys, 'importers'):
@@ -49,11 +51,13 @@ class MainWindow(QMainWindow):
     sudo_passwd: str
     q_settings: QSettings
     fernet: Fernet
+    crypto: Crypto
 
     def __init__(self) -> None:
-        super().__init__()
+        super(QMainWindow, self).__init__()
         self.process = None  # Default empty value.
         self.q_settings = QSettings('settings.ini', QSettings.Format.IniFormat)
+        self.crypto = Crypto(self.q_settings)
         self.check_if_openconnect_is_installed()
         self.check_user()
         self.set_masterkey()
@@ -74,10 +78,15 @@ class MainWindow(QMainWindow):
         self.fernet = Fernet(masterkey)
 
     def setup_ui_settings(self):
-        self.vpn_url_edit.setText(self.decrypt(self.q_settings.value('vpn_url', None)))
-        self.user_edit.setText(self.decrypt(self.q_settings.value('user', None)))
-        self.pass_edit.setText(self.decrypt(self.q_settings.value('pass', None)))
-        self.auth_group_edit.setText(self.decrypt(self.q_settings.value('auth_group', None)))
+        vpn_url = self.crypto.decrypt(self.q_settings.value('vpn_url', None))
+        user = self.crypto.decrypt(self.q_settings.value('user', None))
+        passwd = self.crypto.decrypt(self.q_settings.value('pass', None))
+        auth_group = self.crypto.decrypt(self.q_settings.value('auth_group', None))
+
+        self.vpn_url_edit.setText(vpn_url)
+        self.user_edit.setText(user)
+        self.pass_edit.setText(passwd)
+        self.auth_group_edit.setText(auth_group)
 
     def check_user(self):
         """ Checks if current user is root, otherwise, reopen with root
@@ -89,21 +98,13 @@ class MainWindow(QMainWindow):
                 "Administrative access is required to run this software",
                 QLineEdit.EchoMode.PasswordEchoOnEdit
             )
+            if not pass_sudo[1]:
+                sys.exit(1)
             executable = get_executable()
             # print(f"executable: {executable}")
             # print(f"pass sudo: {pass_sudo[0]}")
             subprocess.run(["sudo", "-S"] + executable, input=pass_sudo[0].encode())
             sys.exit(1)
-
-    def decrypt(self, value: str) -> str:
-        if not value:
-            return ""
-        return self.fernet.decrypt(value).decode()
-
-    def encrypt(self, value: str) -> bytes:
-        if not value:
-            return b''
-        return self.fernet.encrypt(value.encode())
 
     def setup_ui(self):
         """ Build screen with widgets"""
@@ -187,10 +188,10 @@ class MainWindow(QMainWindow):
         self.user_edit.returnPressed.connect(self.pass_edit.setFocus)
         self.pass_edit.returnPressed.connect(self.auth_group_edit.setFocus)
 
-        self.vpn_url_edit.textChanged.connect(lambda x: self.q_settings.setValue('vpn_url', self.encrypt(x)))
-        self.user_edit.textChanged.connect(lambda x: self.q_settings.setValue('user', self.encrypt(x)))
-        self.pass_edit.textChanged.connect(lambda x: self.q_settings.setValue('pass', self.encrypt(x)))
-        self.auth_group_edit.textChanged.connect(lambda x: self.q_settings.setValue('auth_group', self.encrypt(x)))
+        self.vpn_url_edit.textChanged.connect(lambda x: self.q_settings.setValue('vpn_url', self.crypto.encrypt(x)))
+        self.user_edit.textChanged.connect(lambda x: self.q_settings.setValue('user', self.crypto.encrypt(x)))
+        self.pass_edit.textChanged.connect(lambda x: self.q_settings.setValue('pass', self.crypto.encrypt(x)))
+        self.auth_group_edit.textChanged.connect(lambda x: self.q_settings.setValue('auth_group', self.crypto.encrypt(x)))
 
         self.connect_btn.pressed.connect(self.start_process)
         self.disconnect_btn.pressed.connect(self.stop_process)
