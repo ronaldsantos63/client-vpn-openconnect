@@ -36,7 +36,25 @@ jobs:
         pipenv run flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
     - name: Test with pytest
       run: |
-        pipenv run pytest
+        pipenv run pytest -vv
+    - name: Generate coverage
+      uses: tj-actions/coverage-badge-py@v1.8
+      id: changed_files
+      with:
+        files: coverage.svg
+    - name: Commit files
+      if: steps.changed_files.outputs.files_changed == 'true'
+      run: |
+        git config --local user.email "github-actions[bot]@users.noreply.github.com"
+        git config --local user.name "github-actions[bot]"
+        git add coverage.svg
+        git commit -m "Updated coverage.svg"
+    - name: Push changes
+      if: steps.changed_files.outputs.files_changed == 'true'
+      uses: ad-m/github-push-action@master
+      with:
+        github_token: ${{ secrets.github_token }}
+        branch: ${{ github.ref }}
     - name: Build
       run: |
         # Run pyinstaller
