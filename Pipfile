@@ -5,18 +5,19 @@ name = "pypi"
 
 [packages]
 pyqt5 = "5.15.6"
+PyQt5-sip = "12.10.1"
 tk = "0.1.0"
 cryptography = "36.0.2"
 
 [dev-packages]
 pyqt5-tools = "5.15.2.1.2"
 pyinstaller = "4.10"
-pytest = "*"
-flake8 = "*"
-pytest-qt = "*"
-pytest-mock = "*"
-pytest-cov = "*"
-coverage-badge = "*"
+pytest = "7.1.1"
+flake8 = "4.0.1"
+pytest-qt = "4.0.2"
+pytest-mock = "3.7.0"
+pytest-cov = "3.0.0"
+coverage-badge = "1.1.0"
 
 [requires]
 python_version = "3.7"
