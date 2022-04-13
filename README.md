@@ -1,4 +1,5 @@
 ![coverage badge](./coverage.svg)
+[![CI](https://github.com/ronaldsantos63/client-vpn-openconnect/actions/workflows/python-app.yml/badge.svg?event=status)](https://github.com/ronaldsantos63/client-vpn-openconnect/actions/workflows/python-app.yml)
 
 # Client VPN
 
