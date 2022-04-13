@@ -1,3 +1,5 @@
+![coverage badge](./coverage.svg)
+
 # Client VPN
 
 This project aims to facilitate the use of the openconnect program to connect to a vpn
