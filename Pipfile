@@ -7,7 +7,7 @@ name = "pypi"
 pyqt5 = "5.15.6"
 PyQt5-sip = "12.10.1"
 tk = "0.1.0"
-cryptography = "36.0.2"
+cryptography = "39.0.1"
 
 [dev-packages]
 pyqt5-tools = "5.15.2.1.2"
